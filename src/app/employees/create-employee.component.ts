@@ -5,6 +5,8 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { Employee } from '../models/employee.model';
 import { EmployeeService } from './employee.service';
 import { Router } from '@angular/router';
+import { StateVM } from '../models/state.model';
+import { CityVM } from '../models/city.model';
 
 @Component({
   selector: 'app-create-employee',
@@ -12,49 +14,71 @@ import { Router } from '@angular/router';
   styleUrls: ['./create-employee.component.css']
 })
 export class CreateEmployeeComponent implements OnInit {
- // gender = 'male';
- employee : Employee = {
-  id: null,
-  name: null,
-  gender: null,
-  email: '',
-  phoneNumber: null,
-  contactPreference: null,
-  dateOfBirth: null,
-  department: 'select',
-  isActive: null,
-  photoPath : null
- };
- datePickerConfig : Partial<BsDatepickerConfig>;
- dateOfBirth = new Date(2018,0,12);
- previewPhoto: boolean = false;
- departments: Department[] = [
-   {id: 1, name: 'Help Desk'},
-   {id: 2, name : 'HR'},
-   {id: 3, name: 'IT'},
-   {id: 4, name: 'Payroll'}
- ];
-  constructor(private _employeeService: EmployeeService, 
-              private _router: Router) { 
+  private allStates: StateVM[];
+  private allCities: CityVM[];
+  employee: Employee = {
+    id: null,
+    name: null,
+    gender: null,
+    dateOfBirth: null,
+    surname: null,
+    city: null,
+    State: null,
+    CityDetails: null,
+  };
+  stateId: any;
+  datePickerConfig: Partial<BsDatepickerConfig>;
+  dateOfBirth = new Date();
+  minDate: Date;
+
+  constructor(private _employeeService: EmployeeService,
+    private _router: Router) {
+    this.minDate = new Date();
+    this.minDate.setFullYear(this.minDate.getFullYear() - 100);
     this.datePickerConfig = Object.assign({}, {
       containerClass: 'theme-dark-blue',
       showWeekNumbers: false,
-      minDate: new Date(2018, 0, 1),
-      maxDate: new Date(2018, 11, 31),
-      dateInputFormat: 'DD/MM/YYYY'
-  })
+      dateInputFormat: 'DD/MM/YYYY',
+      minDate: this.minDate,
+      maxDate: new Date(),
+    })
   }
 
-  togglePhotoPreview()
-  {
-    this.previewPhoto = !this.previewPhoto;
-  }
-  
   ngOnInit() {
+    this.FillStateDDL();
   }
-   
+
+  FillStateDDL() {
+    this._employeeService.getAllStates().subscribe(s => {
+      this.allStates = s;
+    });
+  }
+  FillCityDDL() {
+    console.log(this.stateId);
+    if (this.stateId == 'select') {
+      this.allCities = [];
+      return;
+    }
+    this._employeeService.getCitiesByStateId(this.stateId).subscribe(s => {
+      this.allCities = s;
+    });
+  }
+
   saveEmployee(form: NgForm): void {
+    this.employee.dateOfBirth = form.value["dateOfBirth"];
+
     this._employeeService.save(this.employee);
     this._router.navigate(['list'])
+  }
+
+  onDateChange() {
+    console.log("value is " + this.dateOfBirth);
+    var now = new Date();
+    var ageDifMs = now.getTime() - this.dateOfBirth.getTime();
+    var ageDate = new Date(ageDifMs);
+    var result = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+    console.log(result);  
+
   }
 }

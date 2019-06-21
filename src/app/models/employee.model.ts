@@ -1,12 +1,13 @@
+import { StateVM } from './state.model';
+import { CityVM } from './city.model';
+
 export class Employee {
     id: number;
     name: string;
+    surname: string;
     gender: string;
-    email? : string;
-    phoneNumber: number;
-    contactPreference: string;
     dateOfBirth: Date;
-    department: string;
-    isActive: boolean;
-    photoPath? : string;
+    city: number;
+    State: number;
+    CityDetails: CityVM;
 }

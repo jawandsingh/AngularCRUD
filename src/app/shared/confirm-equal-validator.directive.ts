@@ -10,14 +10,14 @@ import { Directive } from "@angular/core";
     }]
 })
 export class ConfirmEqualValidatorDirective implements Validator {
-    //@Input() appConfirmEqualValidator: string;
-    validate(passwordGroup: AbstractControl) : {[key: string] :any} | null {
+    validate(passwordGroup: AbstractControl): {[key: string]:any} | null {
         console.log('Equal validator validate')
         const passwordField = passwordGroup.get('password');
         const confirmPasswordField = passwordGroup.get('confirmPassword');
-        if(passwordField == null || confirmPasswordField == null)
+        if(passwordField == null || confirmPasswordField == null) {
         return null;
-        
+        }
+
         return passwordField.value === confirmPasswordField.value ? null : {'notEqual' : true };
     }
 }

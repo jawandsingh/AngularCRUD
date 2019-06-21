@@ -1,9 +1,7 @@
-<!-- <div *ngFor="let employee of employees">
-    <app-display-employee [employee]="employee"></app-display-employee>
-</div> -->
-<button class="btn btn-primary" (click)="nextEmployee()">
-  Display Next >>
-</button>
-<br/>
-<br/>
-<app-display-employee [employee]="employeeToDisplay"></app-display-employee>
+<table class="table table-hover">
+  <tr *ngFor="let emp of employees">
+    <td>{{emp.name}} {{emp.surname}}</td>
+    <td>{{emp.gender}}</td>
+    <td>{{emp.city?.Name}}</td>
+  </tr>
+</table>
